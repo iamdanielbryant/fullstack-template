@@ -5,11 +5,28 @@ const app = express();
 const PORT = process.env.PORT || 5151;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? true : 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
+
+// Log all requests for debugging
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path}`);
+  next();
+});
 
 // Routes
 app.get('/api/hello', (req, res) => {
+  res.json({ 
+    message: 'Hello World from Express Backend!',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Also handle the route without /api prefix for serverless function
+app.get('/hello', (req, res) => {
   res.json({ 
     message: 'Hello World from Express Backend!',
     timestamp: new Date().toISOString()

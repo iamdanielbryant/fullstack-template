@@ -10,16 +10,24 @@ const HelloWorld: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Use environment variable for API URL with fallback
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5151';
+  // In production (Vercel), we want to use relative URLs
+  // In development, we use the localhost URL
+  const isProduction = process.env.NODE_ENV === 'production';
+  const API_URL = isProduction ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:5151');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${API_URL}/api/hello`);
+        // In production, we use a relative URL
+        const apiPath = `/api/hello`;
+        const url = isProduction ? apiPath : `${API_URL}${apiPath}`;
+        
+        console.log('Fetching from URL:', url);
+        const response = await fetch(url);
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch data from backend');
+          throw new Error(`Failed to fetch data from backend: ${response.status}`);
         }
         const result: ApiResponse = await response.json();
         setData(result);
@@ -32,7 +40,7 @@ const HelloWorld: React.FC = () => {
     };
 
     fetchData();
-  }, [API_URL]);
+  }, [API_URL, isProduction]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-purple-600">
@@ -48,7 +56,7 @@ const HelloWorld: React.FC = () => {
           <div className="text-red-600">
             <h1 className="text-2xl font-bold mb-4">Error</h1>
             <p>{error}</p>
-            <p className="text-sm mt-2">Make sure the backend server is running</p>
+            <p className="text-sm mt-2">API URL: {isProduction ? '/api/hello' : `${API_URL}/api/hello`}</p>
           </div>
         )}
         
