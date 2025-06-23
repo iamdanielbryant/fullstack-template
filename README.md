@@ -1,30 +1,15 @@
-# Fullstack Template with Vercel Deployment
+# Fullstack Template with Vercel Serverless API
 
-This is a fullstack template project with React frontend and Express backend, configured for deployment on Vercel.
+This project is a template for a React frontend (with TypeScript and Tailwind CSS) and a Vercel serverless backend (using the `/api` directory for endpoints).
 
 ## Project Structure
 
 - `/frontend` - React TypeScript application with Tailwind CSS
-- `/backend` - Express.js API server
-- `/api` - Serverless function entry point for Vercel
+- `/api` - Vercel serverless function endpoints (e.g., `/api/hello.js`, `/api/health.js`)
 
 ## Local Development
 
-### Running Both Frontend and Backend
-
-```bash
-# Install all dependencies (frontend, backend, and root)
-npm run install:all
-
-# Run both frontend and backend concurrently
-npm run dev
-```
-
-The frontend will run on http://localhost:3000 and the backend on http://localhost:5151.
-
-### Running Separately
-
-#### Frontend
+### Frontend
 
 ```bash
 cd frontend
@@ -32,59 +17,41 @@ npm install
 npm start
 ```
 
-#### Backend
+The frontend will run on http://localhost:3000
+
+### API (Serverless Functions)
+
+- Each file in `/api` is a serverless endpoint when deployed to Vercel.
+- For local API development, use [Vercel CLI](https://vercel.com/docs/cli):
 
 ```bash
-cd backend
-npm install
-npm run dev
+vercel dev
 ```
 
+This will run both the frontend and API endpoints locally, just like in production.
+
 ## Deployment to Vercel
-
-This project is configured to deploy both the frontend and backend to Vercel in a single deployment.
-
-### Setup
 
 1. Install the Vercel CLI:
    ```bash
    npm install -g vercel
    ```
-
 2. Login to Vercel:
    ```bash
    vercel login
    ```
-
-3. Deploy to Vercel:
+3. Deploy:
    ```bash
    vercel
    ```
 
-### Environment Variables
+## API Endpoints
 
-When deploying to Vercel, the following environment variables are automatically set:
-
-- `REACT_APP_API_URL=` (empty string) - This ensures the frontend connects to the backend API at the same domain
-
-### Production Deployment
-
-For production deployment:
-
-```bash
-vercel --prod
-```
-
-## Configuration Files
-
-- `vercel.json` - Contains the Vercel deployment configuration for both frontend and backend
-- `api/index.js` - Serverless function entry point that imports the Express app
-- `frontend/package.json` - Includes the build scripts for Vercel deployment
-- `backend/server.js` - Express server configured to work with Vercel serverless functions
+- `/api/hello` - Returns a hello world message
+- `/api/health` - Returns a health check
 
 ## Notes
 
-- The API routes are prefixed with `/api` in both development and production
-- The frontend build is served from the `/` route
-- In development, you can run both the frontend and backend servers with a single command: `npm run dev`
-- The backend server is configured to run as a regular Express server in development and as a serverless function in production 
+- There is no longer a traditional Node.js/Express backend. All backend logic is in serverless functions in `/api`.
+- The frontend makes requests to `/api/*` endpoints, which are handled by Vercel serverless functions.
+- For custom API logic, add new files to `/api` (e.g., `/api/my-endpoint.js`). 
