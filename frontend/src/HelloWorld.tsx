@@ -10,11 +10,14 @@ const HelloWorld: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Use environment variable for API URL with fallback
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5151';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:5151/api/hello');
+        const response = await fetch(`${API_URL}/api/hello`);
         if (!response.ok) {
           throw new Error('Failed to fetch data from backend');
         }
@@ -22,13 +25,14 @@ const HelloWorld: React.FC = () => {
         setData(result);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Error fetching data:', err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [API_URL]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-400 to-purple-600">
@@ -44,7 +48,7 @@ const HelloWorld: React.FC = () => {
           <div className="text-red-600">
             <h1 className="text-2xl font-bold mb-4">Error</h1>
             <p>{error}</p>
-            <p className="text-sm mt-2">Make sure the backend server is running on port 5000</p>
+            <p className="text-sm mt-2">Make sure the backend server is running</p>
           </div>
         )}
         

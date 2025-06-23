@@ -34,9 +34,15 @@ app.get('/', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  console.log(`API endpoints available at:`);
-  console.log(`  - http://localhost:${PORT}/api/hello`);
-  console.log(`  - http://localhost:${PORT}/api/health`);
-}); 
+// Only start the server if we're not in a serverless environment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`API endpoints available at:`);
+    console.log(`  - http://localhost:${PORT}/api/hello`);
+    console.log(`  - http://localhost:${PORT}/api/health`);
+  });
+}
+
+// Export the Express app for serverless environments
+module.exports = app; 
