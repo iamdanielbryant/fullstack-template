@@ -1,24 +1,18 @@
-// This file serves as an entry point for Vercel serverless functions
-const express = require('express');
-const app = require('../backend/server.js');
-
-// Handle all API routes
+// Simplified API handler for Vercel serverless functions
 module.exports = (req, res) => {
   try {
-    // Log the incoming request for debugging
-    console.log('API request received:', req.url, req.method);
-    
-    // Forward the request to the Express app
-    return app(req, res);
+    // Basic response for debugging
+    return res.status(200).json({
+      message: 'Hello from serverless function',
+      path: req.url,
+      method: req.method,
+      timestamp: new Date().toISOString()
+    });
   } catch (error) {
-    // Log any errors
-    console.error('Error in API handler:', error);
-    
-    // Send a more informative error response
-    res.status(500).json({
+    console.error('Error in serverless function:', error);
+    return res.status(500).json({
       error: 'Internal Server Error',
-      message: error.message || 'Unknown error occurred',
-      path: req.url
+      message: error.message || 'Unknown error occurred'
     });
   }
 }; 

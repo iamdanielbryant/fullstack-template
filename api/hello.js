@@ -1,0 +1,32 @@
+// Dedicated serverless function for the hello endpoint
+module.exports = (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  
+  // Handle OPTIONS request for CORS preflight
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+  
+  // Only allow GET requests
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
+  }
+  
+  try {
+    return res.status(200).json({
+      message: 'Hello World from Express Backend!',
+      timestamp: new Date().toISOString(),
+      environment: 'production',
+      serverless: true
+    });
+  } catch (error) {
+    console.error('Error in hello endpoint:', error);
+    return res.status(500).json({
+      error: 'Internal Server Error',
+      message: error.message || 'Unknown error occurred'
+    });
+  }
+}; 

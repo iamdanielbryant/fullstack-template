@@ -4,6 +4,7 @@ interface ApiResponse {
   message: string;
   timestamp: string;
   environment?: string;
+  serverless?: boolean;
 }
 
 interface ApiError {
@@ -32,7 +33,12 @@ const HelloWorld: React.FC = () => {
         const url = isProduction ? apiPath : `${API_URL}${apiPath}`;
         
         console.log('Fetching from URL:', url);
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
         
         const contentType = response.headers.get('content-type');
         const isJson = contentType && contentType.includes('application/json');
@@ -49,6 +55,7 @@ const HelloWorld: React.FC = () => {
         }
         
         const result: ApiResponse = await response.json();
+        console.log('API Response:', result);
         setData(result);
         setErrorDetails(null);
       } catch (err) {
@@ -112,6 +119,11 @@ const HelloWorld: React.FC = () => {
             {data.environment && (
               <p className="text-sm text-gray-500 mb-4">
                 Environment: {data.environment}
+              </p>
+            )}
+            {data.serverless && (
+              <p className="text-sm text-gray-500 mb-4">
+                Running as serverless function
               </p>
             )}
             <div className="mt-6">
